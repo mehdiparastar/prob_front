@@ -1,15 +1,28 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+import { CookiesProvider } from 'react-cookie';
+import { WithLayout } from './withLayout';
+import { SnackbarProvider } from 'notistack';
+
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <App />
+    <CookiesProvider>
+      <WithLayout>
+        <SnackbarProvider maxSnack={3}>
+          <App />
+        </SnackbarProvider>
+      </WithLayout>
+    </CookiesProvider>
   </React.StrictMode>
 );
 
