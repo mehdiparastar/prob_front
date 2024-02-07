@@ -6,7 +6,7 @@ import IconButton from '@mui/material/IconButton';
 import { useTheme } from '@mui/material/styles';
 import Grid from '@mui/material/Unstable_Grid2';
 import React from 'react';
-import MUITNTSVG from '../../../svg/logos/MUITNT';
+import CRAAZARSVG from '../../../svg/logos/CRAAZAR';
 import { paletteTypes } from '../../../theme/paletteTypes';
 import { ThemeContext } from '../../../withLayout';
 
@@ -34,7 +34,7 @@ export const TopbarContent: React.FC<Props & { onSidebarOpen: () => void }> = ({
           <MenuIcon />
         </IconButton>
 
-        <MUITNTSVG
+        <CRAAZARSVG
           sx={{
             width: 50,
             height: { xs: 28, md: 32 },

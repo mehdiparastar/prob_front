@@ -9,6 +9,8 @@ import '@fontsource/roboto/700.css';
 import { CookiesProvider } from 'react-cookie';
 import { WithLayout } from './withLayout';
 import { SnackbarProvider } from 'notistack';
+import { Provider } from 'react-redux';
+import { store } from './redux/store';
 
 
 const root = ReactDOM.createRoot(
@@ -16,13 +18,15 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <CookiesProvider>
-      <WithLayout>
-        <SnackbarProvider maxSnack={3}>
-          <App />
-        </SnackbarProvider>
-      </WithLayout>
-    </CookiesProvider>
+    <Provider store={store}>
+      <CookiesProvider>
+        <WithLayout>
+          <SnackbarProvider maxSnack={3}>
+            <App />
+          </SnackbarProvider>
+        </WithLayout>
+      </CookiesProvider>
+    </Provider>
   </React.StrictMode>
 );
 

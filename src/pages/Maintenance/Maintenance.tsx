@@ -8,7 +8,7 @@ import { MaintenanceSVG } from '../../svg/pages/MaintenanceSVG';
 
 
 const Maintenance: FC<any> = (): ReactElement => {
-  
+
   const theme = useTheme();
 
   React.useEffect(() => {
@@ -43,7 +43,6 @@ const Maintenance: FC<any> = (): ReactElement => {
               height={'100%'}
               width={'100%'}
               maxWidth={500}
-              data-aos="fade-up"
             >
               <MaintenanceSVG
                 width={'100%'}

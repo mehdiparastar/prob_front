@@ -37,21 +37,20 @@ export const Inspiration: React.FC<Props> = (props) => {
             gutterBottom
             align={'center'}
           >
-            The statute of MUITNT
+            The statute of CRAAZAR
           </Box>
           <Typography
             variant={'h6'}
             component={'p'}
             color={'textSecondary'}
             align={'center'}
-            data-aos="fade-up"
           >
             The centrality of creativity, uniqueness, variant attitude,
             knowledgebase and being experienced
             <br />
             have created the foundation of{' '}
             <strong style={{ color: theme.palette.secondary.main }}>
-              MUITNT
+              CRAAZAR
             </strong>
             .
           </Typography>
@@ -78,7 +77,7 @@ export const Inspiration: React.FC<Props> = (props) => {
             },
             {
               name: 'Mehdi Parastar 🚽',
-              title: 'SEO at MUITNT',
+              title: 'SEO at CRAAZAR',
               avatar: 'statics/inspiration/m01.jpeg',
             },
           ].map((item, i) => (
@@ -87,7 +86,6 @@ export const Inspiration: React.FC<Props> = (props) => {
               sm={6}
               md={3}
               key={i}
-              data-aos={'fade-up'}
             >
               <Box
                 component={Card}

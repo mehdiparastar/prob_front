@@ -1,9 +1,7 @@
 import { Container } from '@mui/material';
-import { useTheme } from '@mui/material/styles';
 import Grid from '@mui/material/Unstable_Grid2';
-
-import React, { FC, ReactElement, useEffect } from 'react';
-
+import { useTheme } from '@mui/material/styles';
+import { FC, ReactElement, useEffect } from 'react';
 import { Features } from './components/Features/Features';
 import { Hero } from './components/Hero/Hero';
 import { Inspiration } from './components/Inspiration/Inspiration';
@@ -11,10 +9,13 @@ import { Inspiration } from './components/Inspiration/Inspiration';
 const Home: FC<Props> = (Props): ReactElement => {
 
   const theme = useTheme();
+
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     return () => { };
   }, []);
+
 
   return (
     <Grid
@@ -30,7 +31,7 @@ const Home: FC<Props> = (Props): ReactElement => {
         position="relative"
       >
         <Container
-          maxWidth="lg"
+          maxWidth="xl"
           sx={{
             px: 2,
             py: { xs: 4, sm: 6, md: 8 },

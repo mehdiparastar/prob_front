@@ -4,7 +4,7 @@ import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
 import Toolbar from '@mui/material/Toolbar';
 import * as React from 'react';
-import MUITNTSVG from '../../svg/logos/MUITNT';
+import CRAAZARSVG from '../../svg/logos/CRAAZAR';
 
 
 type SidebarProps = Props & {
@@ -44,7 +44,7 @@ export const Sidebar: React.FC<SidebarProps> = (props) => {
           justifyContent: 'space-between',
         }}
       >
-        <MUITNTSVG sx={{ width: 60, height: 60 }} />
+        <CRAAZARSVG sx={{ width: 60, height: 60 }} />
         <IconButton onClick={onClose}>
           <CloseIcon
             color="secondary"

@@ -12,7 +12,7 @@ import Grid from '@mui/material/Unstable_Grid2';
 
 import * as React from 'react';
 
-// import MUITNTSVG from 'svg/logos/MUITNT';
+// import CRAAZARSVG from 'svg/logos/CRAAZAR';
 export const FooterContent: React.FC = () => {
   
   const theme = useTheme();
@@ -57,7 +57,7 @@ export const FooterContent: React.FC = () => {
                     &copy;{' '}
                     {
                       <strong style={{ color: theme.palette.secondary.main }}>
-                        MUITNT.
+                        CRAAZAR.
                       </strong>
                     }{' '}
                     {`${new Date().getFullYear()}`},{' '}
@@ -80,9 +80,7 @@ export const FooterContent: React.FC = () => {
                     color="text.secondary"
                     component={'p'}
                   >
-                    This is an infrastructure for utilizing trend technologies
-                    in web development; Material-UI v5 - Reactjs v18 - SVG -
-                    Nestjs - TypeORM - Docker are fantastic.
+                    This is an infrastructure for Automation of Drive Testing process.
                   </Typography>
                 </Grid>
                 <Grid

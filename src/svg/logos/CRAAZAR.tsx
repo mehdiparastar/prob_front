@@ -4,7 +4,7 @@ import { SvgIcon, SvgIconProps } from '@mui/material';
 
 
 
-const MUITNTSVG: React.FC<SvgIconProps> = ({
+const CRAAZARSVG: React.FC<SvgIconProps> = ({
   width = 101.36,
   height = 70,
   ...rest
@@ -52,10 +52,10 @@ const MUITNTSVG: React.FC<SvgIconProps> = ({
         strokeWidth={2}
         stroke={theme.palette.secondary.main}
       >
-        MUITNT
+        CRAAZAR
       </text>
     </SvgIcon>
   );
 };
 
-export default MUITNTSVG;
+export default CRAAZARSVG;

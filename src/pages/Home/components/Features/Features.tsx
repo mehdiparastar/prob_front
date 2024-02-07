@@ -72,7 +72,7 @@ export const Features: React.FC<Props> = (props) => {
   return (
     <Box>
       <Box marginBottom={4}>
-        <Box data-aos="fade-down">
+        <Box>
           <Typography
             sx={{
               textTransform: 'uppercase',
@@ -110,8 +110,7 @@ export const Features: React.FC<Props> = (props) => {
         <Box
           marginTop={3}
           display={'flex'}
-          justifyContent={'center'}
-          data-aos="fade-up"
+          justifyContent={'center'}          
         >
           <Button
             variant="contained"
@@ -152,8 +151,7 @@ export const Features: React.FC<Props> = (props) => {
                 borderRadius={4}
                 width={'100%'}
                 height={'100%'}
-                maxWidth={600}
-                data-aos={'fade-up'}
+                maxWidth={600}                
               >
                 <CardContent sx={{ padding: 0 }}>{feature.banner}</CardContent>
                 <CardContent>
@@ -196,8 +194,7 @@ export const Features: React.FC<Props> = (props) => {
         <Box
           height={'100%'}
           width={'100%'}
-          maxWidth={600}
-          data-aos="zoom-in"
+          maxWidth={600}          
         >
           <UI03BGSVG
             height={'100%'}

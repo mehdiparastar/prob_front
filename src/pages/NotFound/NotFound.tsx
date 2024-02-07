@@ -48,7 +48,6 @@ const NotFound: FC<any> = (): ReactElement => {
               height={'100%'}
               width={'100%'}
               maxWidth={{ xs: 500, md: '100%' }}
-              data-aos={isMd ? 'fade-right' : 'fade-up'}
             >
               <NotFoundSVG
                 width={'100%'}
@@ -64,7 +63,7 @@ const NotFound: FC<any> = (): ReactElement => {
             md={6}
             p={3}
           >
-            <Box data-aos={isMd ? 'fade-left' : 'fade-up'}>
+            <Box>
               <Typography
                 variant="h1"
                 component={'h1'}
@@ -108,7 +107,7 @@ const NotFound: FC<any> = (): ReactElement => {
           </Grid>
         </Grid>
       </Container>
-    </Box>
+    </Box >
   );
 };
 
