@@ -14,7 +14,7 @@ import * as React from 'react';
 
 // import CRAAZARSVG from 'svg/logos/CRAAZAR';
 export const FooterContent: React.FC = () => {
-  
+
   const theme = useTheme();
   return (
     <Container
@@ -81,6 +81,14 @@ export const FooterContent: React.FC = () => {
                     component={'p'}
                   >
                     This is an infrastructure for Automation of Drive Testing process.
+                  </Typography>
+                  <Typography
+                    align={'center'}
+                    variant={'caption'}
+                    color="text.secondary"
+                    component={'p'}
+                  >
+                    اداره کل تنظیم مقررات و ارتباطات رادیویی منطقه آذر
                   </Typography>
                 </Grid>
                 <Grid

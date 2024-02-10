@@ -16,6 +16,10 @@ export interface IProbPortsInitRes {
     msg: string
 }
 
+export interface IProbStoppingDTRes {
+    msg: string
+}
+
 export const probApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
         probGetHello: builder.query<IProbGetHello, void>({
@@ -36,11 +40,22 @@ export const probApiSlice = apiSlice.injectEndpoints({
                 }
             },
             invalidatesTags: [invalidatesTags.PortInIt]
+        }),
+
+        stoppingDT: builder.mutation<IProbStoppingDTRes, void>({
+            query(args) {
+                return {
+                    url: `prob/stop-dt`,
+                    method: 'GET',
+                }
+            },
+            invalidatesTags: [invalidatesTags.PortInIt]
         })
     })
 })
 
 export const {
     useProbGetHelloQuery,
-    useInitPortsMutation
+    useInitPortsMutation,
+    useStoppingDTMutation
 } = probApiSlice
