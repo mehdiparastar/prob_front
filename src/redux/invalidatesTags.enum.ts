@@ -1,4 +1,7 @@
 
 export enum invalidatesTags {
-    PortInIt = "PORTINIT"
+    PortInIt = "PORTINIT",
+    stopDT = "STOPDT",
+    startDT = "STARTDT",
+    pauseDT = "PAUSEDT"
 }

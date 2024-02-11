@@ -22,8 +22,6 @@ export const baseQueryWithReauth: BaseQueryFn<
 export const apiSlice = createApi({
   reducerPath: 'apiSlice',
   baseQuery: baseQueryWithReauth,
-  tagTypes: [
-    invalidatesTags.PortInIt
-  ],
+  tagTypes: Object.values(invalidatesTags),
   endpoints: (builder) => ({}),
 });

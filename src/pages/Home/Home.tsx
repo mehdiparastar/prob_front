@@ -7,10 +7,8 @@ import { Hero } from './components/Hero/Hero';
 import { Inspiration } from './components/Inspiration/Inspiration';
 
 const Home: FC<Props> = (Props): ReactElement => {
-
   const theme = useTheme();
-
-
+  
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     return () => { };
@@ -64,7 +62,7 @@ const Home: FC<Props> = (Props): ReactElement => {
             py: { xs: 4, sm: 6, md: 8 },
           }}
         >
-          <Inspiration />
+          {/* <Inspiration /> */}
         </Container>
       </Grid>
     </Grid>
