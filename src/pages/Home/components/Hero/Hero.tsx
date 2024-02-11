@@ -1,5 +1,5 @@
 import PhoneIphoneIcon from '@mui/icons-material/PhoneIphone';
-import { Box, Button, ButtonGroup, FormControl, FormHelperText, Grow, InputLabel, LinearProgress, MenuItem, Paper, Stack, TextField, Typography } from '@mui/material';
+import { Box, Button, ButtonGroup, FormControl, FormHelperText, Grow, InputLabel, LinearProgress, MenuItem, Paper, Stack, TextField } from '@mui/material';
 import Select from '@mui/material/Select';
 import Grid from '@mui/material/Unstable_Grid2';
 import { useTheme } from '@mui/material/styles';
@@ -90,6 +90,7 @@ const Phones: React.FC<Props> = (props) => {
 
 export const Hero: React.FC<Props> = (props) => {
   const theme = useTheme();
+  // eslint-disable-next-line 
   const isMd = useMediaQuery(theme.breakpoints.up('md'), { defaultMatches: true });
 
   const { enqueueSnackbar } = useSnackbar()
@@ -107,14 +108,14 @@ export const Hero: React.FC<Props> = (props) => {
   const validationSchema = yup.object/*<Shape<ICreateChatRoomFormDto>>*/({
     logLocation: yup
       .string()
-      .required('* required')
-      .oneOf(Object.values(logLocationType), 'invalid value.'),
+      .required('required')
+      .oneOf(Object.values(logLocationType), 'Invalid value.'),
     expertId: yup
       .number()
-      .required('* required'),
+      .required('required'),
     code: yup
       .string()
-      .required('* required')
+      .required('required')
       .min(5, 'Min Len is 5'),
   });
 
@@ -170,7 +171,7 @@ export const Hero: React.FC<Props> = (props) => {
 
   return (
     <Stack direction={'column'}>
-      <TextField sx={{ mb: 2 }} label="Current Status:" value={currentDTStatus?.status || "There is no connection."} />
+      <TextField variant='filled' sx={{ mb: 2 }} label="Current Status:" value={currentDTStatus?.status || "There is no connection."} />
       <Phones />
       <form onSubmit={formik.handleSubmit}>
         <Grid
@@ -266,6 +267,12 @@ export const Hero: React.FC<Props> = (props) => {
           >
             <Box sx={{ position: 'relative', display: 'inline-block', p: 0, m: 0, width: 1, height: 1 }}>
               <ButtonGroup fullWidth sx={{ height: '100%' }}>
+                {
+                  !currentDTStatus &&
+                  <Button disabled={loading} variant="outlined" color="secondary" fullWidth sx={{ height: '100%' }}>
+                    <strong>{"WAIT..."}</strong>
+                  </Button>
+                }
                 {
                   (currentDTStatus?.status === dtCurrentStatusENUM.idle || currentDTStatus?.status === dtCurrentStatusENUM.stopped) &&
                   <Button disabled={loading} variant="outlined" color="secondary" fullWidth sx={{ height: '100%' }} type='submit' onClick={(e) => handleSubmit(formik.values, formik, submitTypeENUM.init)}>

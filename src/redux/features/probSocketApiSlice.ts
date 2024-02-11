@@ -1,6 +1,5 @@
 import { Socket, io } from "socket.io-client";
 import { apiSlice } from "../../api/rtkApi/apiSlice";
-import { invalidatesTags } from "../invalidatesTags.enum";
 import { logLocationType } from "../../pages/Home/components/Hero/Hero";
 
 export enum dtCurrentStatusENUM {
