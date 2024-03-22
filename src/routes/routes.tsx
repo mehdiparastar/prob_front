@@ -5,6 +5,7 @@ import NotFound from '../pages/NotFound/NotFound';
 import { Route, Routes } from 'react-router-dom';
 import About from '../pages/About/About';
 import Home from '../pages/Home/Home';
+import MSDetails from '../pages/MSDetails/MSDetails';
 
 
 export const RoutesList: React.FC = () => {
@@ -17,7 +18,7 @@ export const RoutesList: React.FC = () => {
         <Route path="notfound" element={<NotFound />} />
         <Route path="maintenance" element={<Maintenance />} />
         <Route path="about" element={<About />} />
-
+        <Route path="msDetails" element={<MSDetails />} />
 
 
         {/* catch all */}

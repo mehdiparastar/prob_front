@@ -107,7 +107,7 @@ export const Hero: React.FC<Props> = (props) => {
         if (submitType === submitTypeENUM.pause) {
           const { msg } = await pausingDT().unwrap()
           enqueueSnackbar(`${msg}`, { variant: 'success' })
-        }        
+        }
         if (submitType === submitTypeENUM.stop) {
           const { msg } = await stoppingDT().unwrap()
           enqueueSnackbar(`${msg}`, { variant: 'success' })
@@ -331,17 +331,20 @@ const Phones: React.FC<Props & { portsInitingStatus: IPortInitStatus[] | undefin
             portsInitingStatus?.map((item, index) => (
               <Grow key={index} in={true} timeout={1000}>
                 <Grid
-                  xs={3}
+                  xs={2}
                   textAlign={'center'}
                   justifyItems={'center'}
                   justifyContent={'center'}
                 >
                   <Box
                     sx={{
-                      width: `${item.progress}%`,
+                      // width: `${item.progress}%`,
+                      width: '100%',
+                      height: `${item.progress}%`,
                       margin: 'auto',
                       overflow: 'hidden',
-                      transition: 'width 0.5s ease-in-out, margin 0.5s ease-in-out', // Adjust the transition properties as needed
+                      // transition: 'width 0.5s ease-in-out, margin 0.5s ease-in-out', // Adjust the transition properties as needed
+                      transition: 'height 0.5s ease-in-out, margin 0.5s ease-in-out', // Adjust the transition properties as needed
                       transformOrigin: 'center', // To make the transformation originate from the center
                       transform: 'scaleX(1)', // Initial scale, you can adjust this as needed
                       pt: 1

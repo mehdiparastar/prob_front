@@ -51,6 +51,70 @@ export interface IDTCurrentLogLocCode {
     logLocCode: string
 }
 
+export interface IExpert {
+    id: number,
+    email: string,
+    name: string,
+    createdAt?: Date,
+    updatedAt?: Date,
+}
+
+export interface IInspection {
+    id: number,
+    type: logLocationType,
+    code: string
+    expert?: IExpert,
+    expertId?: number
+}
+export interface IGSMIdle {
+    id: number,
+    tech: string,
+    mcc: string,
+    mnc: string,
+    lac: string,
+    cellid: string,
+    bsic: string,
+    arfcn: string,
+    bandgsm: string,
+    rxlev: string,
+    txp: string,
+    tla: string,
+    drx: string,
+    c1: string,
+    c2: string,
+    gprs: string,
+    tch: string,
+    ts: string,
+    ta: string,
+    maio: string,
+    hsn: string,
+    rxlevsub: string,
+    rxlevfull: string,
+    rxqualsub: string,
+    rxqualfull: string,
+    voicecodec: string,
+    inspection?: IInspection,
+    inspectionId?: number,
+    createdAt?: Date,
+    updatedAt?: Date,
+}
+
+export interface IGSMLockIdle {
+    id: number,
+    gpsTime?: string, // Store GPS time as seconds since the GPS epoch
+    latitude: string,
+    longitude: string,
+    altitude: string,
+    groundSpeed: string,
+    gsmIdleSamplesMCI: IGSMIdle[],
+    gsmIdleSamplesMTN: IGSMIdle[],
+    inspection?: IInspection,
+    inspectionId?: number,
+    createdAt?: Date,
+    updatedAt?: Date,
+
+}
+
 
 export let probSocket: Socket
 
@@ -98,7 +162,8 @@ export const probSocketApiSlice = apiSlice.injectEndpoints({
                     await cacheEntryRemoved;
 
                 } catch (error) {
-                    alert((error as any).status || "An Socket Error Occured.")
+                    window.location.reload();
+                    console.error((error as any).status || "An Socket Error Occured.")
                 }
             }
         }),
@@ -126,8 +191,8 @@ export const probSocketApiSlice = apiSlice.injectEndpoints({
                     await cacheEntryRemoved;
 
                 } catch (error) {
-                    console.log('xxxxx', error)
-                    alert((error as any).status || "An Socket Error Occured.")
+                    console.error((error as any).status || "An Socket Error Occured.")
+                    window.location.reload();
                 }
             }
         }),
@@ -153,7 +218,8 @@ export const probSocketApiSlice = apiSlice.injectEndpoints({
                     await cacheEntryRemoved;
 
                 } catch (error) {
-                    alert((error as any).status || "An Socket Error Occured.")
+                    console.error((error as any).status || "An Socket Error Occured.")
+                    window.location.reload();
                 }
             },
         }),
@@ -179,7 +245,8 @@ export const probSocketApiSlice = apiSlice.injectEndpoints({
                     await cacheEntryRemoved;
 
                 } catch (error) {
-                    alert((error as any).status || "An Socket Error Occured.")
+                    console.error((error as any).status || "An Socket Error Occured.")
+                    window.location.reload();
                 }
             },
         }),
@@ -205,7 +272,8 @@ export const probSocketApiSlice = apiSlice.injectEndpoints({
                     await cacheEntryRemoved;
 
                 } catch (error) {
-                    alert((error as any).status || "An Socket Error Occured.")
+                    console.error((error as any).status || "An Socket Error Occured.")
+                    window.location.reload();
                 }
             },
         }),
@@ -231,10 +299,39 @@ export const probSocketApiSlice = apiSlice.injectEndpoints({
                     await cacheEntryRemoved;
 
                 } catch (error) {
-                    alert((error as any).status || "An Socket Error Occured.")
+                    console.error((error as any).status || "An Socket Error Occured.")
+                    window.location.reload();
                 }
             },
-        })
+        }),
+
+        getDTCurrentGSMLockIdle_MCI: builder.query<IGSMLockIdle[], void>({
+            query(arg) {
+                return {
+                    url: `prob/getDTCurrentGSMLockIdle_MCI`,
+                    method: "GET"
+                }
+            },
+
+            async onCacheEntryAdded(arg, { dispatch, cacheDataLoaded, cacheEntryRemoved, updateCachedData, getState }) {
+                try {
+                    await cacheDataLoaded
+
+                    probSocket.on("dtCurrentGSMLockIdle_MCI", (data: IGSMLockIdle) => {
+                        updateCachedData((draft) => {
+                            // return [...draft, { ...data, latitude: `${+draft.slice(-1)[0].latitude + 0.0005}`, longitude: `${+draft.slice(-1)[0].longitude + 0.0001}` }]
+                            return [...draft, data]
+                        })
+                    })
+
+                    await cacheEntryRemoved;
+
+                } catch (error) {
+                    console.error((error as any).status || "An Socket Error Occured.")
+                    window.location.reload();
+                }
+            },
+        }),
     })
 })
 
@@ -244,5 +341,6 @@ export const {
     useGetDTCurrentStatusQuery,
     useGetDTCurrentExpertIdQuery,
     useGetDTCurrentLogLocTypeQuery,
-    useGetDTCurrentLogLocCodeQuery
+    useGetDTCurrentLogLocCodeQuery,
+    useGetDTCurrentGSMLockIdle_MCIQuery
 } = probSocketApiSlice

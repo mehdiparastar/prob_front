@@ -3,7 +3,7 @@ import { Box, Typography } from '@mui/material';
 
 
 const About: FC<any> = (): ReactElement => {
-  
+
   React.useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     return () => { };
@@ -16,10 +16,11 @@ const About: FC<any> = (): ReactElement => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        py: 1
       }}
     >
       <Typography fontFamily={'iransansx'} variant="h3">
-        مهدی پرستار
+        اداره کل تنظیم مقررات و ارتباطات رادیویی منطقه آذر
       </Typography>
     </Box>
   );
