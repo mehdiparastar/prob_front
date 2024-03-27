@@ -224,7 +224,11 @@ const MapLibre: React.FC<MapLibreProps> = ({ mapStyle }) => {
                 map.current.getCanvas().style.cursor = '';
             });
 
-            map.current.panTo([+gsmIdleLockData_MCI.slice(-1)[0].longitude, +gsmIdleLockData_MCI.slice(-1)[0].latitude])
+            const lng = gsmIdleLockData_MCI.slice(-1)[0] && +gsmIdleLockData_MCI.slice(-1)[0].longitude
+            const lat = gsmIdleLockData_MCI.slice(-1)[0] && +gsmIdleLockData_MCI.slice(-1)[0].latitude
+            if (lng && lat) {
+                map.current.panTo([lng, lat])
+            }
         }
     };
 
