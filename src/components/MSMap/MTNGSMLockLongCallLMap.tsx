@@ -5,7 +5,7 @@ import { APIProvider, AdvancedMarker, Map } from '@vis.gl/react-google-maps';
 import maplibregl, { NavigationControl } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import React, { useEffect, useRef, useState } from 'react';
-import { IGSMLockIdle, useGetDTCurrentGSMLockIdle_MCIQuery } from '../../redux/features/probSocketApiSlice';
+import { IGSMLockLongCall, useGetDTCurrentGSMLockLongCall_MTNQuery } from '../../redux/features/probSocketApiSlice';
 import { BlackDot } from '../BlackDot/BlackDot';
 import { GreenDot } from '../GreenDot/GreenDot';
 import { RedDot } from '../RedDot/RedDot';
@@ -34,9 +34,9 @@ const enum DotColorsEnum {
     black = 'BLACK',
 }
 
-interface LMapProps { }
+interface MTNGSMLockLongCallLMapProps { }
 
-const LMap: React.FC<LMapProps> = () => {
+const MTNGSMLockLongCallLMap: React.FC<MTNGSMLockLongCallLMapProps> = () => {
     const [mapStyle, setMapStyle] = useState<MapType>(MapType.STREET)
 
 
@@ -49,7 +49,7 @@ const LMap: React.FC<LMapProps> = () => {
                     <Button color={mapStyle === MapType.OFFLINE ? 'primary' : 'secondary'} onClick={() => setMapStyle(MapType.OFFLINE)}>Offline</Button>
                     <Button color={mapStyle === MapType.GOOGLE ? 'primary' : 'secondary'} onClick={() => setMapStyle(MapType.GOOGLE)}>Google</Button>
                 </ButtonGroup>
-                <Chip label={"2G Lock IDLE"} color="info" />
+                <Chip label={<Typography sx={{ fontSize: 9.5 }} variant='caption'>2G Lock Long Call <small>MTN</small></Typography>} color="info" />
             </Box>
             {
                 mapStyle !== MapType.GOOGLE ?
@@ -65,31 +65,31 @@ const LMap: React.FC<LMapProps> = () => {
 interface GMapProps { }
 
 const GMap: React.FC<GMapProps> = () => {
-    const { data: gsmIdleLockData_MCI } = useGetDTCurrentGSMLockIdle_MCIQuery()
+    const { data: gsmLongCallLockData_MTN } = useGetDTCurrentGSMLockLongCall_MTNQuery()
 
     return (
 
         <Box sx={{ position: 'relative', display: 'inline-block', p: 0, m: 0, width: 1, height: 1, minHeight: 400 }}>
             {
-                gsmIdleLockData_MCI &&
+                gsmLongCallLockData_MTN &&
                 <APIProvider apiKey={"AIzaSyBTAu6wiVZVn6sajQl-DM2TkY0oKon2MLk"} >
                     <Map
                         mapId={'bf51a910020fa25a'}
                         style={{ borderRadius: "4px" }}
-                        defaultCenter={{ lat: (gsmIdleLockData_MCI && gsmIdleLockData_MCI.slice(-1)[0] && +gsmIdleLockData_MCI.slice(-1)[0].latitude) || 38.026946, lng: (gsmIdleLockData_MCI && gsmIdleLockData_MCI.slice(-1)[0] && +gsmIdleLockData_MCI.slice(-1)[0].longitude) || 46.369456 }}
+                        defaultCenter={{ lat: (gsmLongCallLockData_MTN && gsmLongCallLockData_MTN.slice(-1)[0] && +gsmLongCallLockData_MTN.slice(-1)[0].latitude) || 38.026946, lng: (gsmLongCallLockData_MTN && gsmLongCallLockData_MTN.slice(-1)[0] && +gsmLongCallLockData_MTN.slice(-1)[0].longitude) || 46.369456 }}
                         defaultZoom={15}
                         gestureHandling={'greedy'}
                         disableDefaultUI={true}
                         mapTypeId={GMapTypeId.SATELLITE}
                     >
                         {
-                            gsmIdleLockData_MCI?.map((point, index) =>
+                            gsmLongCallLockData_MTN?.map((point, index) =>
                                 <AdvancedMarker
                                     key={index}
                                     position={{ lat: +point.latitude, lng: +point.longitude }}
                                     title={'AdvancedMarker with custom html content.'}
                                 >
-                                    {getRxLevColoredDot(point.gsmIdleSamplesMCI && point.gsmIdleSamplesMCI[0] && +point.gsmIdleSamplesMCI[0].rxlev)}
+                                    {getRxQualColoredDot(point.gsmLongCallSamplesMTN && point.gsmLongCallSamplesMTN[0] && +point.gsmLongCallSamplesMTN[0].rxqualsub)}
                                 </AdvancedMarker>
                             )
                         }
@@ -108,17 +108,17 @@ const MapLibre: React.FC<MapLibreProps> = ({ mapStyle }) => {
     const mapContainer = useRef<HTMLDivElement>(null);
     const map = useRef<maplibregl.Map | null>(null);
     const theme = useTheme();
-    const { data: gsmIdleLockData_MCI = [] } = useGetDTCurrentGSMLockIdle_MCIQuery()
+    const { data: gsmLongCallLockData_MTN = [] } = useGetDTCurrentGSMLockLongCall_MTNQuery()
     const [showTable, setShowTable] = useState<boolean>(false);
 
-    const lastLat = +(gsmIdleLockData_MCI.slice(-1)[0]?.latitude)
-    const lastLng = +(gsmIdleLockData_MCI.slice(-1)[0]?.longitude)
-    const lastAlt = +(gsmIdleLockData_MCI.slice(-1)[0]?.altitude)
+    const lastLat = +(gsmLongCallLockData_MTN.slice(-1)[0]?.latitude)
+    const lastLng = +(gsmLongCallLockData_MTN.slice(-1)[0]?.longitude)
+    const lastAlt = +(gsmLongCallLockData_MTN.slice(-1)[0]?.altitude)
 
-    const lastRxLev = +(gsmIdleLockData_MCI.slice(-1)[0]?.gsmIdleSamplesMCI[0]?.rxlev) || +(gsmIdleLockData_MCI.slice(-2)[0]?.gsmIdleSamplesMCI[0]?.rxlev)
+    const lastRxQual = +(gsmLongCallLockData_MTN.slice(-1)[0]?.gsmLongCallSamplesMTN[0]?.rxqualsub) || +(gsmLongCallLockData_MTN.slice(-2)[0]?.gsmLongCallSamplesMTN[0]?.rxqualsub)
 
-    const getGeojsonFeatures = (gsmIdleLockData: IGSMLockIdle[]): GeoJSON.Feature[] => {
-        return gsmIdleLockData.map(p => (
+    const getGeojsonFeatures = (gsmLongCallLockData: IGSMLockLongCall[]): GeoJSON.Feature[] => {
+        return gsmLongCallLockData.map(p => (
             {
                 type: 'Feature',
                 geometry: {
@@ -126,9 +126,9 @@ const MapLibre: React.FC<MapLibreProps> = ({ mapStyle }) => {
                     coordinates: [+p.longitude, +p.latitude] // [46.324562, 38.068597]
                 },
                 properties: {
-                    color: getRxLevColor((p.gsmIdleSamplesMCI && p.gsmIdleSamplesMCI.length > 0) ? +p.gsmIdleSamplesMCI[0]?.rxlev : 0),
-                    value: (p.gsmIdleSamplesMCI && p.gsmIdleSamplesMCI.length > 0) ? +p.gsmIdleSamplesMCI[0]?.rxlev : 0,
-                    description: `<div style=color:black;><strong>RxLev</strong>: ${(p.gsmIdleSamplesMCI && p.gsmIdleSamplesMCI.length > 0) ? +p.gsmIdleSamplesMCI[0]?.rxlev : 0} dbm</div>`
+                    color: getRxQualColor((p.gsmLongCallSamplesMTN && p.gsmLongCallSamplesMTN.length > 0) ? +p.gsmLongCallSamplesMTN[0]?.rxqualsub : 0),
+                    value: (p.gsmLongCallSamplesMTN && p.gsmLongCallSamplesMTN.length > 0) ? +p.gsmLongCallSamplesMTN[0]?.rxqualsub : 0,
+                    description: `<div style=color:black;><strong>RxQual</strong>: ${(p.gsmLongCallSamplesMTN && p.gsmLongCallSamplesMTN.length > 0) ? +p.gsmLongCallSamplesMTN[0]?.rxqualsub : 0} dbm</div>`
                 }
             }
         ))
@@ -147,7 +147,7 @@ const MapLibre: React.FC<MapLibreProps> = ({ mapStyle }) => {
             // Define the GeoJSON source
             const geojson: GeoJSON.FeatureCollection = {
                 type: 'FeatureCollection',
-                features: getGeojsonFeatures(gsmIdleLockData_MCI)
+                features: getGeojsonFeatures(gsmLongCallLockData_MTN)
             };
 
             // Add the GeoJSON source to the map
@@ -224,7 +224,7 @@ const MapLibre: React.FC<MapLibreProps> = ({ mapStyle }) => {
                 map.current.getCanvas().style.cursor = '';
             });
 
-            map.current.panTo([+gsmIdleLockData_MCI.slice(-1)[0].longitude, +gsmIdleLockData_MCI.slice(-1)[0].latitude])
+            map.current.panTo([+gsmLongCallLockData_MTN.slice(-1)[0].longitude, +gsmLongCallLockData_MTN.slice(-1)[0].latitude])
         }
     };
 
@@ -258,23 +258,23 @@ const MapLibre: React.FC<MapLibreProps> = ({ mapStyle }) => {
         if (map.current) {
             const geojson: GeoJSON.FeatureCollection = {
                 type: 'FeatureCollection',
-                features: getGeojsonFeatures(gsmIdleLockData_MCI)
+                features: getGeojsonFeatures(gsmLongCallLockData_MTN)
             };
 
             const src = map.current.getSource('point') as any
-            if (src && gsmIdleLockData_MCI.length > 0) {
+            if (src && gsmLongCallLockData_MTN.length > 0) {
                 src.setData(geojson)
-                const lng = +gsmIdleLockData_MCI.slice(-1)[0].longitude
-                const lat = +gsmIdleLockData_MCI.slice(-1)[0].latitude
+                const lng = +gsmLongCallLockData_MTN.slice(-1)[0].longitude
+                const lat = +gsmLongCallLockData_MTN.slice(-1)[0].latitude
                 if (lat && lng)
-                    map.current.panTo([+gsmIdleLockData_MCI.slice(-1)[0].longitude, +gsmIdleLockData_MCI.slice(-1)[0].latitude])
+                    map.current.panTo([+gsmLongCallLockData_MTN.slice(-1)[0].longitude, +gsmLongCallLockData_MTN.slice(-1)[0].latitude])
             }
         }
         // eslint-disable-next-line
-    }, [gsmIdleLockData_MCI])
+    }, [gsmLongCallLockData_MTN])
 
-    const getRxLevColor = (rxLev: number | string) => {
-        const colorEnum = getRxLevColorEnum(rxLev)
+    const getRxQualColor = (rxQual: number | string) => {
+        const colorEnum = getRxQualColorEnum(rxQual)
 
         switch (colorEnum) {
             case DotColorsEnum.green:
@@ -305,13 +305,13 @@ const MapLibre: React.FC<MapLibreProps> = ({ mapStyle }) => {
                 </Box>
             </Box>
             {
-                gsmIdleLockData_MCI.length > 0 ?
+                gsmLongCallLockData_MTN.length > 0 ?
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', width: 1 }}>
                         <Typography variant='caption'>
                             {lastLat.toFixed(4)}, {lastLng.toFixed(4)}, {lastAlt.toFixed(0)}
                         </Typography>
                         <Typography variant='caption'>
-                            RxLev: {lastRxLev} | samples: {gsmIdleLockData_MCI.length}
+                            RxQual: {lastRxQual} | samples: {gsmLongCallLockData_MTN.length}
                         </Typography>
                     </Box> :
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', width: 1 }}>
@@ -319,7 +319,7 @@ const MapLibre: React.FC<MapLibreProps> = ({ mapStyle }) => {
                             -, -, -
                         </Typography>
                         <Typography variant='caption'>
-                            RxLev: - | samples: {gsmIdleLockData_MCI.length}
+                            RxQual: - | samples: {gsmLongCallLockData_MTN.length}
                         </Typography>
                     </Box>
             }
@@ -332,11 +332,11 @@ interface TableGuideProps { }
 
 const TableGuide: React.FC<TableGuideProps> = () => {
     const theme = useTheme();
-    const { data: gsmIdleLockData_MCI = [] } = useGetDTCurrentGSMLockIdle_MCIQuery()
+    const { data: gsmLongCallLockData_MTN = [] } = useGetDTCurrentGSMLockLongCall_MTNQuery()
 
-    const samples = gsmIdleLockData_MCI.filter(item => item.latitude).map(sm => {
-        const rxlev = sm.gsmIdleSamplesMCI && sm.gsmIdleSamplesMCI[0] && sm.gsmIdleSamplesMCI[0].rxlev
-        return getRxLevColorEnum(rxlev)
+    const samples = gsmLongCallLockData_MTN.filter(item => item.latitude).map(sm => {
+        const rxqualsub = sm.gsmLongCallSamplesMTN && sm.gsmLongCallSamplesMTN[0] && sm.gsmLongCallSamplesMTN[0].rxqualsub
+        return getRxQualColorEnum(rxqualsub)
     })
 
     const greenCount = samples.filter(sm => sm === DotColorsEnum.green).length
@@ -350,18 +350,18 @@ const TableGuide: React.FC<TableGuideProps> = () => {
     let redKM = 0
     let blackKM = 0
 
-    for (let i = 1; i < gsmIdleLockData_MCI.filter(item => item.latitude).length; i++) {
-        const sm = gsmIdleLockData_MCI[i];
-        const rxlev = sm.gsmIdleSamplesMCI && sm.gsmIdleSamplesMCI[0] && sm.gsmIdleSamplesMCI[0].rxlev
-        const rxlevColor = getRxLevColorEnum(rxlev)
+    for (let i = 1; i < gsmLongCallLockData_MTN.filter(item => item.latitude).length; i++) {
+        const sm = gsmLongCallLockData_MTN[i];
+        const rxqualsub = sm.gsmLongCallSamplesMTN && sm.gsmLongCallSamplesMTN[0] && sm.gsmLongCallSamplesMTN[0].rxqualsub
+        const rxqualsubColor = getRxQualColorEnum(rxqualsub)
         if (i > 0) {
             const currentLat = +sm.latitude
             const currentLng = +sm.longitude
-            const prevLat = +gsmIdleLockData_MCI[i - 1].latitude
-            const prevLng = +gsmIdleLockData_MCI[i - 1].longitude
+            const prevLat = +gsmLongCallLockData_MTN[i - 1].latitude
+            const prevLng = +gsmLongCallLockData_MTN[i - 1].longitude
 
             const dist = calculateDistance(prevLat, prevLng, currentLat, currentLng)
-            switch (rxlevColor) {
+            switch (rxqualsubColor) {
                 case DotColorsEnum.green:
                     greenKM = greenKM + dist
                     break;
@@ -395,7 +395,7 @@ const TableGuide: React.FC<TableGuideProps> = () => {
             <Box component={'table'} sx={{ zIndex: 1, borderCollapse: 'collapse', fontSize: 10, border: 1, maxWidth: 120, borderRadius: '4px', color: theme.palette.common.black }} >
                 <Box component={'tbody'}>
                     <Box component={'tr'} borderBottom={1}>
-                        <Box component={'th'} color={theme.palette.info.main} colSpan={2}>2G Lock IDLE</Box>
+                        <Box component={'th'} color={theme.palette.info.main} colSpan={2}><Typography sx={{ fontSize: 9 }} noWrap>RxQual <small>MTN</small></Typography></Box>
                         <Box component={'th'} borderLeft={1}>SAM</Box>
                         <Box component={'th'} borderLeft={1}>%SAM</Box>
                         <Box component={'th'} borderLeft={1}>KM</Box>
@@ -403,7 +403,7 @@ const TableGuide: React.FC<TableGuideProps> = () => {
                     </Box>
                     <Box component={'tr'} borderBottom={1}>
                         <Box component={'th'}>
-                            <Typography noWrap variant='caption'>[-90, +∞)</Typography>
+                            <Typography noWrap variant='caption'>(-∞, 5)</Typography>
                         </Box>
                         <Box component={'th'} borderRight={1}><Box sx={{ margin: 'auto', width: 12, height: 12, background: theme.palette.success.light, border: `2px solid ${theme.palette.success.dark}`, borderRadius: '50%' }} /></Box>
                         <Box component={'td'} borderRight={1}>{greenCount}</Box>
@@ -413,7 +413,7 @@ const TableGuide: React.FC<TableGuideProps> = () => {
                     </Box>
                     <Box component={'tr'} borderBottom={1}>
                         <Box component={'th'}>
-                            <Typography noWrap variant='caption'>[-93, -90)</Typography>
+                            <Typography noWrap variant='caption'>[5, 6)</Typography>
                         </Box>
                         <Box component={'th'} borderRight={1}><Box sx={{ margin: 'auto', width: 12, height: 12, background: theme.palette.warning.light, border: `2px solid ${theme.palette.warning.dark}`, borderRadius: '50%' }} /></Box>
                         <Box component={'td'} borderRight={1}>{yellowCount}</Box>
@@ -423,7 +423,7 @@ const TableGuide: React.FC<TableGuideProps> = () => {
                     </Box>
                     <Box component={'tr'} borderBottom={1}>
                         <Box component={'th'}>
-                            <Typography noWrap variant='caption'>(-∞, +93)</Typography>
+                            <Typography noWrap variant='caption'>[6, +∞)</Typography>
                         </Box>
                         <Box component={'th'} borderRight={1}><Box sx={{ margin: 'auto', width: 12, height: 12, background: theme.palette.error.light, border: `2px solid ${theme.palette.error.dark}`, borderRadius: '50%' }} /></Box>
                         <Box component={'td'} borderRight={1}>{redCount}</Box>
@@ -447,8 +447,8 @@ const TableGuide: React.FC<TableGuideProps> = () => {
     )
 }
 
-export const getRxLevColoredDot = (rxLev: number | string) => {
-    const colorEnum = getRxLevColorEnum(rxLev)
+export const getRxQualColoredDot = (rxQual: number | string) => {
+    const colorEnum = getRxQualColorEnum(rxQual)
 
     switch (colorEnum) {
         case DotColorsEnum.green:
@@ -469,13 +469,13 @@ export const getRxLevColoredDot = (rxLev: number | string) => {
 
 };
 
-export const getRxLevColorEnum = (rxLev: number | string) => {
-    if (Number.isNaN(+rxLev) === false || (typeof (rxLev) === 'string' && rxLev.trim() !== '')) {
-        if (+rxLev < -93) {
-            return DotColorsEnum.red
-        } else if (+rxLev >= -90) {
+export const getRxQualColorEnum = (rxQual: number | string) => {
+    if (Number.isNaN(+rxQual) === false || (typeof (rxQual) === 'string' && rxQual.trim() !== '')) {
+        if (+rxQual < 5) {
             return DotColorsEnum.green
-        } else if (+rxLev >= -93 && +rxLev < -90) {
+        } else if (+rxQual >= 6) {
+            return DotColorsEnum.red
+        } else if (+rxQual >= 5 && +rxQual < 6) {
             return DotColorsEnum.yellow
         } else {
             return DotColorsEnum.black
@@ -516,4 +516,4 @@ export const calculateDistance = (
     return distance;
 };
 
-export default LMap
+export default MTNGSMLockLongCallLMap
