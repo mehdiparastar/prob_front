@@ -1,5 +1,6 @@
 import { apiSlice } from "../../api/rtkApi/apiSlice";
 import { logLocationType } from "../../pages/Home/components/Hero/Hero";
+import { IMSDetails } from "../../pages/MSDetails/MSDetails";
 import { invalidatesTags } from "../invalidatesTags.enum";
 
 export interface IProbGetHello {
@@ -10,6 +11,13 @@ export interface IProbPortsInitArgs {
     type: logLocationType,
     code: string,
     expertId: number
+}
+
+export interface IInspection {
+    id: number,
+    type: logLocationType,
+    code: string,
+    expertId?: number
 }
 
 export interface IProbPortsInitRes {
@@ -26,6 +34,10 @@ export interface IProbStartingDTRes {
 
 export interface IProbPausingDTRes {
     msg: string
+}
+
+export interface IFindMSDetailsArgs {
+    inspectionId: number
 }
 
 
@@ -79,8 +91,36 @@ export const probApiSlice = apiSlice.injectEndpoints({
                 }
             },
             invalidatesTags: [invalidatesTags.pauseDT]
-        })
+        }),
 
+        getAllInspections: builder.query<IInspection[], void>({
+            query() {
+                return {
+                    url: `prob/getAllInspections`,
+                    method: "GET"
+                }
+            },
+        }),
+
+        getCurrentActiveInspection: builder.query<IInspection, void>({
+            query() {
+                return {
+                    url: `prob/getCurrentActiveInspection`,
+                    method: "GET"
+                }
+            },
+        }),
+
+        findMSDetails: builder.mutation<IMSDetails[], IFindMSDetailsArgs>({
+            query(args) {
+                return {
+                    url: `prob/find-ms-details`,
+                    method: 'POST',
+                    body: args
+                }
+            },
+            invalidatesTags: [invalidatesTags.findMSDetails]
+        }),
     })
 })
 
@@ -89,5 +129,8 @@ export const {
     useInitPortsMutation,
     useStoppingDTMutation,
     useStartingDTMutation,
-    usePausingDTMutation
+    usePausingDTMutation,
+    useFindMSDetailsMutation,
+    useGetAllInspectionsQuery,
+    useGetCurrentActiveInspectionQuery,    
 } = probApiSlice

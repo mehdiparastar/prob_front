@@ -65,38 +65,72 @@ const MCIGSMLockIdleLMap: React.FC<MCIGSMLockIdleLMapProps> = () => {
 interface GMapProps { }
 
 const GMap: React.FC<GMapProps> = () => {
-    const { data: gsmIdleLockData_MCI } = useGetDTCurrentGSMLockIdle_MCIQuery()
+    const { data: gsmIdleLockData_MCI = [] } = useGetDTCurrentGSMLockIdle_MCIQuery()
+    const [showTable, setShowTable] = useState<boolean>(false);
+    const theme = useTheme();
+
+    const lastLat = +(gsmIdleLockData_MCI.slice(-1)[0]?.latitude)
+    const lastLng = +(gsmIdleLockData_MCI.slice(-1)[0]?.longitude)
+    const lastAlt = +(gsmIdleLockData_MCI.slice(-1)[0]?.altitude)
+
+    const lastRxLev = +(gsmIdleLockData_MCI.slice(-1)[0]?.gsmIdleSamplesMCI[0]?.rxlev) || +(gsmIdleLockData_MCI.slice(-2)[0]?.gsmIdleSamplesMCI[0]?.rxlev)
 
     return (
-
-        <Box sx={{ position: 'relative', display: 'inline-block', p: 0, m: 0, width: 1, height: 1, minHeight: 400 }}>
+        <Stack direction={'column'}>
+            <Box sx={{ position: 'relative', display: 'inline-block', p: 0, m: 0, width: 1, height: 1 }}>
+                {
+                    gsmIdleLockData_MCI &&
+                    <APIProvider apiKey={"AIzaSyBTAu6wiVZVn6sajQl-DM2TkY0oKon2MLk"} >
+                        <Map
+                            mapId={'bf51a910020fa25a_gsmIdleLockData_MCI'}
+                            style={{ borderRadius: "4px", minHeight: "400px" }}
+                            defaultCenter={{ lat: (gsmIdleLockData_MCI && gsmIdleLockData_MCI.slice(-1)[0] && +gsmIdleLockData_MCI.slice(-1)[0].latitude) || 38.026946, lng: (gsmIdleLockData_MCI && gsmIdleLockData_MCI.slice(-1)[0] && +gsmIdleLockData_MCI.slice(-1)[0].longitude) || 46.369456 }}
+                            defaultZoom={15}
+                            gestureHandling={'greedy'}
+                            disableDefaultUI={true}
+                            mapTypeId={GMapTypeId.SATELLITE}
+                        >
+                            {
+                                gsmIdleLockData_MCI?.map((point, index) =>
+                                    <AdvancedMarker
+                                        key={index}
+                                        position={{ lat: +point.latitude, lng: +point.longitude }}
+                                        title={'AdvancedMarker with custom html content.'}
+                                    >
+                                        {getRxLevColoredDot(point.gsmIdleSamplesMCI && point.gsmIdleSamplesMCI[0] && +point.gsmIdleSamplesMCI[0].rxlev)}
+                                    </AdvancedMarker>
+                                )
+                            }
+                        </Map>
+                    </APIProvider>
+                }
+                <Box sx={{ zIndex: 1, position: 'absolute', bottom: theme.spacing(1), left: theme.spacing(1), maxWidth: "100%", textAlign: 'left' }}>
+                    <IconButton size='small' sx={{ bgcolor: theme.palette.common.white, mb: 0.5, p: 0, left: 0, ":hover": { bgcolor: theme.palette.common.white } }} onClick={() => setShowTable(!showTable)}>
+                        <InfoIcon color={"info"} />
+                    </IconButton>
+                    {showTable && <TableGuide />}
+                </Box>
+            </Box>
             {
-                gsmIdleLockData_MCI &&
-                <APIProvider apiKey={"AIzaSyBTAu6wiVZVn6sajQl-DM2TkY0oKon2MLk"} >
-                    <Map
-                        mapId={'bf51a910020fa25a'}
-                        style={{ borderRadius: "4px" }}
-                        defaultCenter={{ lat: (gsmIdleLockData_MCI && gsmIdleLockData_MCI.slice(-1)[0] && +gsmIdleLockData_MCI.slice(-1)[0].latitude) || 38.026946, lng: (gsmIdleLockData_MCI && gsmIdleLockData_MCI.slice(-1)[0] && +gsmIdleLockData_MCI.slice(-1)[0].longitude) || 46.369456 }}
-                        defaultZoom={15}
-                        gestureHandling={'greedy'}
-                        disableDefaultUI={true}
-                        mapTypeId={GMapTypeId.SATELLITE}
-                    >
-                        {
-                            gsmIdleLockData_MCI?.map((point, index) =>
-                                <AdvancedMarker
-                                    key={index}
-                                    position={{ lat: +point.latitude, lng: +point.longitude }}
-                                    title={'AdvancedMarker with custom html content.'}
-                                >
-                                    {getRxLevColoredDot(point.gsmIdleSamplesMCI && point.gsmIdleSamplesMCI[0] && +point.gsmIdleSamplesMCI[0].rxlev)}
-                                </AdvancedMarker>
-                            )
-                        }
-                    </Map>
-                </APIProvider>
+                gsmIdleLockData_MCI.length > 0 ?
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', width: 1 }}>
+                        <Typography variant='caption'>
+                            {lastLat.toFixed(4)}, {lastLng.toFixed(4)}, {lastAlt.toFixed(0)}
+                        </Typography>
+                        <Typography variant='caption'>
+                            RxLev: {lastRxLev} | samples: {gsmIdleLockData_MCI.length}
+                        </Typography>
+                    </Box> :
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', width: 1 }}>
+                        <Typography variant='caption'>
+                            -, -, -
+                        </Typography>
+                        <Typography variant='caption'>
+                            RxLev: - | samples: {gsmIdleLockData_MCI.length}
+                        </Typography>
+                    </Box>
             }
-        </Box>
+        </Stack>
     );
 }
 

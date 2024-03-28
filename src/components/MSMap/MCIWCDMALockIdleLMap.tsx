@@ -65,38 +65,72 @@ const MCIWCDMALockIdleLMap: React.FC<MCIWCDMALockIdleLMapProps> = () => {
 interface GMapProps { }
 
 const GMap: React.FC<GMapProps> = () => {
-    const { data: wcdmaIdleLockData_MCI } = useGetDTCurrentWCDMALockIdle_MCIQuery()
+    const { data: wcdmaIdleLockData_MCI = [] } = useGetDTCurrentWCDMALockIdle_MCIQuery()
+    const [showTable, setShowTable] = useState<boolean>(false);
+    const theme = useTheme();
+
+    const lastLat = +(wcdmaIdleLockData_MCI.slice(-1)[0]?.latitude)
+    const lastLng = +(wcdmaIdleLockData_MCI.slice(-1)[0]?.longitude)
+    const lastAlt = +(wcdmaIdleLockData_MCI.slice(-1)[0]?.altitude)
+
+    const lastRSCP = +(wcdmaIdleLockData_MCI.slice(-1)[0]?.wcdmaIdleSamplesMCI[0]?.rscp) || +(wcdmaIdleLockData_MCI.slice(-2)[0]?.wcdmaIdleSamplesMCI[0]?.rscp)
 
     return (
-
-        <Box sx={{ position: 'relative', display: 'inline-block', p: 0, m: 0, width: 1, height: 1, minHeight: 400 }}>
+        <Stack direction={'column'}>
+            <Box sx={{ position: 'relative', display: 'inline-block', p: 0, m: 0, width: 1, height: 1 }}>
+                {
+                    wcdmaIdleLockData_MCI &&
+                    <APIProvider apiKey={"AIzaSyBTAu6wiVZVn6sajQl-DM2TkY0oKon2MLk"} >
+                        <Map
+                            mapId={'bf51a910020fa25a_wcdmaIdleLockData_MCI'}
+                            style={{ borderRadius: "4px", minHeight: "400px" }}
+                            defaultCenter={{ lat: (wcdmaIdleLockData_MCI && wcdmaIdleLockData_MCI.slice(-1)[0] && +wcdmaIdleLockData_MCI.slice(-1)[0].latitude) || 38.026946, lng: (wcdmaIdleLockData_MCI && wcdmaIdleLockData_MCI.slice(-1)[0] && +wcdmaIdleLockData_MCI.slice(-1)[0].longitude) || 46.369456 }}
+                            defaultZoom={15}
+                            gestureHandling={'greedy'}
+                            disableDefaultUI={true}
+                            mapTypeId={GMapTypeId.SATELLITE}
+                        >
+                            {
+                                wcdmaIdleLockData_MCI?.map((point, index) =>
+                                    <AdvancedMarker
+                                        key={index}
+                                        position={{ lat: +point.latitude, lng: +point.longitude }}
+                                        title={'AdvancedMarker with custom html content.'}
+                                    >
+                                        {getRSCPColoredDot(point.wcdmaIdleSamplesMCI && point.wcdmaIdleSamplesMCI[0] && +point.wcdmaIdleSamplesMCI[0].rscp)}
+                                    </AdvancedMarker>
+                                )
+                            }
+                        </Map>
+                    </APIProvider>
+                }
+                <Box sx={{ zIndex: 1, position: 'absolute', bottom: theme.spacing(1), left: theme.spacing(1), maxWidth: "100%", textAlign: 'left' }}>
+                    <IconButton size='small' sx={{ bgcolor: theme.palette.common.white, mb: 0.5, p: 0, left: 0, ":hover": { bgcolor: theme.palette.common.white } }} onClick={() => setShowTable(!showTable)}>
+                        <InfoIcon color={"info"} />
+                    </IconButton>
+                    {showTable && <TableGuide />}
+                </Box>
+            </Box>
             {
-                wcdmaIdleLockData_MCI &&
-                <APIProvider apiKey={"AIzaSyBTAu6wiVZVn6sajQl-DM2TkY0oKon2MLk"} >
-                    <Map
-                        mapId={'bf51a910020fa25a'}
-                        style={{ borderRadius: "4px" }}
-                        defaultCenter={{ lat: (wcdmaIdleLockData_MCI && wcdmaIdleLockData_MCI.slice(-1)[0] && +wcdmaIdleLockData_MCI.slice(-1)[0].latitude) || 38.026946, lng: (wcdmaIdleLockData_MCI && wcdmaIdleLockData_MCI.slice(-1)[0] && +wcdmaIdleLockData_MCI.slice(-1)[0].longitude) || 46.369456 }}
-                        defaultZoom={15}
-                        gestureHandling={'greedy'}
-                        disableDefaultUI={true}
-                        mapTypeId={GMapTypeId.SATELLITE}
-                    >
-                        {
-                            wcdmaIdleLockData_MCI?.map((point, index) =>
-                                <AdvancedMarker
-                                    key={index}
-                                    position={{ lat: +point.latitude, lng: +point.longitude }}
-                                    title={'AdvancedMarker with custom html content.'}
-                                >
-                                    {getRSCPColoredDot(point.wcdmaIdleSamplesMCI && point.wcdmaIdleSamplesMCI[0] && +point.wcdmaIdleSamplesMCI[0].rscp)}
-                                </AdvancedMarker>
-                            )
-                        }
-                    </Map>
-                </APIProvider>
+                wcdmaIdleLockData_MCI.length > 0 ?
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', width: 1 }}>
+                        <Typography variant='caption'>
+                            {lastLat.toFixed(4)}, {lastLng.toFixed(4)}, {lastAlt.toFixed(0)}
+                        </Typography>
+                        <Typography variant='caption'>
+                            RSCP: {lastRSCP} | samples: {wcdmaIdleLockData_MCI.length}
+                        </Typography>
+                    </Box> :
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', width: 1 }}>
+                        <Typography variant='caption'>
+                            -, -, -
+                        </Typography>
+                        <Typography variant='caption'>
+                            RSCP: - | samples: {wcdmaIdleLockData_MCI.length}
+                        </Typography>
+                    </Box>
             }
-        </Box>
+        </Stack>
     );
 }
 

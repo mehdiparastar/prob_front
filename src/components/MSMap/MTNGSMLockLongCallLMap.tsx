@@ -65,38 +65,72 @@ const MTNGSMLockLongCallLMap: React.FC<MTNGSMLockLongCallLMapProps> = () => {
 interface GMapProps { }
 
 const GMap: React.FC<GMapProps> = () => {
-    const { data: gsmLongCallLockData_MTN } = useGetDTCurrentGSMLockLongCall_MTNQuery()
+    const { data: gsmLongCallLockData_MTN = [] } = useGetDTCurrentGSMLockLongCall_MTNQuery()
+    const [showTable, setShowTable] = useState<boolean>(false);
+    const theme = useTheme();
+
+    const lastLat = +(gsmLongCallLockData_MTN.slice(-1)[0]?.latitude)
+    const lastLng = +(gsmLongCallLockData_MTN.slice(-1)[0]?.longitude)
+    const lastAlt = +(gsmLongCallLockData_MTN.slice(-1)[0]?.altitude)
+
+    const lastRxQual = +(gsmLongCallLockData_MTN.slice(-1)[0]?.gsmLongCallSamplesMTN[0]?.rxqualsub) || +(gsmLongCallLockData_MTN.slice(-2)[0]?.gsmLongCallSamplesMTN[0]?.rxqualsub)
 
     return (
-
-        <Box sx={{ position: 'relative', display: 'inline-block', p: 0, m: 0, width: 1, height: 1, minHeight: 400 }}>
+        <Stack direction={'column'}>
+            <Box sx={{ position: 'relative', display: 'inline-block', p: 0, m: 0, width: 1, height: 1 }}>
+                {
+                    gsmLongCallLockData_MTN &&
+                    <APIProvider apiKey={"AIzaSyBTAu6wiVZVn6sajQl-DM2TkY0oKon2MLk"} >
+                        <Map
+                            mapId={'bf51a910020fa25a_gsmLongCallLockData_MTN'}
+                            style={{ borderRadius: "4px", minHeight: "400px" }}
+                            defaultCenter={{ lat: (gsmLongCallLockData_MTN && gsmLongCallLockData_MTN.slice(-1)[0] && +gsmLongCallLockData_MTN.slice(-1)[0].latitude) || 38.026946, lng: (gsmLongCallLockData_MTN && gsmLongCallLockData_MTN.slice(-1)[0] && +gsmLongCallLockData_MTN.slice(-1)[0].longitude) || 46.369456 }}
+                            defaultZoom={15}
+                            gestureHandling={'greedy'}
+                            disableDefaultUI={true}
+                            mapTypeId={GMapTypeId.SATELLITE}
+                        >
+                            {
+                                gsmLongCallLockData_MTN?.map((point, index) =>
+                                    <AdvancedMarker
+                                        key={index}
+                                        position={{ lat: +point.latitude, lng: +point.longitude }}
+                                        title={'AdvancedMarker with custom html content.'}
+                                    >
+                                        {getRxQualColoredDot(point.gsmLongCallSamplesMTN && point.gsmLongCallSamplesMTN[0] && +point.gsmLongCallSamplesMTN[0].rxqualsub)}
+                                    </AdvancedMarker>
+                                )
+                            }
+                        </Map>
+                    </APIProvider>
+                }
+                <Box sx={{ zIndex: 1, position: 'absolute', bottom: theme.spacing(1), left: theme.spacing(1), maxWidth: "100%", textAlign: 'left' }}>
+                    <IconButton size='small' sx={{ bgcolor: theme.palette.common.white, mb: 0.5, p: 0, left: 0, ":hover": { bgcolor: theme.palette.common.white } }} onClick={() => setShowTable(!showTable)}>
+                        <InfoIcon color={"info"} />
+                    </IconButton>
+                    {showTable && <TableGuide />}
+                </Box>
+            </Box>
             {
-                gsmLongCallLockData_MTN &&
-                <APIProvider apiKey={"AIzaSyBTAu6wiVZVn6sajQl-DM2TkY0oKon2MLk"} >
-                    <Map
-                        mapId={'bf51a910020fa25a'}
-                        style={{ borderRadius: "4px" }}
-                        defaultCenter={{ lat: (gsmLongCallLockData_MTN && gsmLongCallLockData_MTN.slice(-1)[0] && +gsmLongCallLockData_MTN.slice(-1)[0].latitude) || 38.026946, lng: (gsmLongCallLockData_MTN && gsmLongCallLockData_MTN.slice(-1)[0] && +gsmLongCallLockData_MTN.slice(-1)[0].longitude) || 46.369456 }}
-                        defaultZoom={15}
-                        gestureHandling={'greedy'}
-                        disableDefaultUI={true}
-                        mapTypeId={GMapTypeId.SATELLITE}
-                    >
-                        {
-                            gsmLongCallLockData_MTN?.map((point, index) =>
-                                <AdvancedMarker
-                                    key={index}
-                                    position={{ lat: +point.latitude, lng: +point.longitude }}
-                                    title={'AdvancedMarker with custom html content.'}
-                                >
-                                    {getRxQualColoredDot(point.gsmLongCallSamplesMTN && point.gsmLongCallSamplesMTN[0] && +point.gsmLongCallSamplesMTN[0].rxqualsub)}
-                                </AdvancedMarker>
-                            )
-                        }
-                    </Map>
-                </APIProvider>
+                gsmLongCallLockData_MTN.length > 0 ?
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', width: 1 }}>
+                        <Typography variant='caption'>
+                            {lastLat.toFixed(4)}, {lastLng.toFixed(4)}, {lastAlt.toFixed(0)}
+                        </Typography>
+                        <Typography variant='caption'>
+                            RxQual: {lastRxQual} | samples: {gsmLongCallLockData_MTN.length}
+                        </Typography>
+                    </Box> :
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', width: 1 }}>
+                        <Typography variant='caption'>
+                            -, -, -
+                        </Typography>
+                        <Typography variant='caption'>
+                            RxQual: - | samples: {gsmLongCallLockData_MTN.length}
+                        </Typography>
+                    </Box>
             }
-        </Box>
+        </Stack>
     );
 }
 
